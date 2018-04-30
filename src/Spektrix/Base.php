@@ -20,10 +20,10 @@ class Base
 
   public function __construct()
   {
-    $this->api_key = getenv('SPEKTRIX_API_KEY');
-    $this->certificate_path = $this->set_if_file_exists(getenv('SPEKTRIX_CERTIFICATE_PATH'));
-    $this->key_path = $this->set_if_file_exists(getenv('SPEKTRIX_KEY_PATH'));
-    $this->api_url = getenv('SPEKTRIX_API_URL');
+    $this->api_key = SPEKTRIX_API_KEY;
+    $this->certificate_path = $this->set_if_file_exists(SPEKTRIX_CERTIFICATE_PATH);
+    $this->key_path = $this->set_if_file_exists(SPEKTRIX_KEY_PATH);
+    $this->api_url = SPEKTRIX_API_URL;
   }
 
   /**
