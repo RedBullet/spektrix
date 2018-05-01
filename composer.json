@@ -1,6 +1,5 @@
 {
   "name": "RedBullet/spektrix",
-  "type": "wordpress-plugin",
   "description": "A PHP wrapper for working with Spektrix in Wordpress",
   "keywords": [
     "spektrix",
