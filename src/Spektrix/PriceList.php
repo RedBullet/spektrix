@@ -16,8 +16,8 @@ class PriceList extends Base
     }
   }
 
-  public function prices()
+  public function get_prices()
   {
-
+    return $this->prices;
   }
 }
