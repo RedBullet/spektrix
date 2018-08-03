@@ -34,13 +34,15 @@ class Base
     * @return SimpleXMLElement(s)
     */
 
-  protected function get_xml_object($resource, $params=array())
+  protected function get_xml_object($resource, $params=array(), $method='GET', $reqbody=null)
   {
     $this->resource = $resource;
     $this->params = $params;
+    $this->method = $method;
+    $this->reqbody = $reqbody;
     try {
       $xml_string = $this->load_or_retrieve_data();
-      if($xml_string){
+      if($xml_string || (!$xml_string && $method !== 'GET')){
         $xml_as_object = simplexml_load_string($xml_string);
         return $xml_as_object;
       } else {
@@ -78,15 +80,31 @@ class Base
     * @see Base::build_url()
     */
 
-  private function request_xml($xml_url)
+  private function request_xml($xml_url, $method = 'GET', $reqbody = null)
   {
     $curl = curl_init();
+    $requestHeaders = array();
+
     $options = array(
       CURLOPT_URL => $xml_url,
       CURLOPT_RETURNTRANSFER => 1,
       CURLOPT_SSLCERT => $this->certificate_path,
       CURLOPT_SSLKEY => $this->key_path
     );
+
+    if ($method === 'POST') {
+        $options[CURLOPT_POST] = true;
+    } elseif ($method !== 'GET') {
+        $options[CURLOPT_CUSTOMREQUEST] = $method;
+    }
+
+    if ($method === 'POST' || $method === 'PATCH') {
+        $requestHeaders[] = 'Content-Type: application/xml';
+        $options[CURLOPT_POSTFIELDS] = $reqbody;
+    }
+
+    $options[CURLOPT_HTTPHEADER] = $requestHeaders;
+
     curl_setopt_array($curl, $options);
     $string = curl_exec($curl);
     return $string;
@@ -95,10 +113,10 @@ class Base
   private function load_or_retrieve_data()
   {
     $file = new CachedFile($this->resource, $this->params);
-    if($file->is_cached_and_fresh()){
+    if($file->is_cached_and_fresh() && 1 === 2){
       $xml_string = $file->retrieve();
     } else {
-      $xml_string = $this->request_xml($this->build_url());
+      $xml_string = $this->request_xml($this->build_url(), $this->method, $this->reqbody);
       $file->store($xml_string);
     }
     return $xml_string;
