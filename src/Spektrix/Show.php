@@ -47,6 +47,12 @@ class Show extends Base
     $this->image_thumb = (string) $event->ThumbnailUrl;
     $this->is_on_sale = (boolean) $event->IsOnSale;
     $this->duration = (integer) $event->Duration;
+    
+    foreach ((array) $event->Attribute as $attribute) {
+        if ($attribute['Name'] === 'Choose Attendee') {
+            $this->choose_attendee = $attribute['Value'];
+        }
+    }
 
     $this->related_events = (array) $this->related_events_ids($event);
     $this->tags = (array) $this->tags_array($event);
