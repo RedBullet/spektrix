@@ -48,10 +48,10 @@ class Show extends Base
     $this->is_on_sale = (boolean) $event->IsOnSale;
     $this->duration = (integer) $event->Duration;
     
-    foreach ((array) $event->Attribute as $attribute) {
-        if ($attribute['Name'] === 'Choose Attendee') {
-            $this->choose_attendee = $attribute['Value'];
-        }
+    $choose_attendee_attribute = (array) $event->Attribute[0];
+
+    if ($choose_attendee_attribute['Name'] === 'Choose Attendee') {
+        $this->choose_attendee = $choose_attendee_attribute['Value'];
     }
 
     $this->related_events = (array) $this->related_events_ids($event);
